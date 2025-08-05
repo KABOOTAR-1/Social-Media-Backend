@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-crypto = require('crypto');
+const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 
 const AuthSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
@@ -11,29 +12,33 @@ const AuthSchema = new mongoose.Schema({
     passwordResetExpires: { type: Date, default: null },
 });
 
-AuthSchema.pre('save', function(next) {
-    if (this.isModified('password')) { 
-        this.password = hashPassword(this.password); 
+const hashPassword = async (password) => {
+    return await bcrypt.hash(password, 10);
+}
+
+AuthSchema.pre('save', async function (next) {
+    if (this.isModified('password')) {
+        this.password = await hashPassword(this.password);
     }
     next();
 });
 
-const generateToken = function() {
+const generateToken = function () {
     return crypto.randomBytes(32).toString('hex');
 }
 
-AuthSchema.methods.comparePassword = function(candidatePassword) {
-    return comparePassword(candidatePassword, this.password);
+AuthSchema.methods.comparePassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password)
 }
 
-AuthSchema.methods.generateEmailVerificationToken = function() {
+AuthSchema.methods.generateEmailVerificationToken = function () {
     this.emailVerificationToken = generateToken();
     return this.emailVerificationToken;
 }
 
-AuthSchema.method.generatePasswordResetToken = function() {
+AuthSchema.methods.generatePasswordResetToken = function () {
     this.passwordResetToken = generateToken();
-    this.passwordResetExpires = Date.now() + 3600000; 
+    this.passwordResetExpires = Date.now() + 3600000;
     return this.passwordResetToken;
 }
 

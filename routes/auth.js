@@ -1,21 +1,22 @@
-const express=require('express');
-const router=express.Router();
+const express = require('express');
+const router = express.Router();
+const authController = require('../controllers/auth');
+const validate = require('../middleware/validate');
 
-//post routes for authentication
-router.post('/login', (req, res) => {
-    res.send('Login route');
-});
+// Auth routes
+router.post('/login', authController.login);
+router.post('/register', authController.register);
+router.post('/logout', authController.logout);
 
-router.post('/register', (req, res) => {
-    res.send('Register route');
-});
+// Password reset routes
+router.post('/forgot-password', authController.forgotPassword);
+router.get('/password/reset/:token', authController.resetPassword);
 
-router.post('/logout', (req, res) => {
-    res.send('Logout route');
-});
+// Email verification routes
+router.post('/send-verification-email', authController.sendVerificationEmail);
+router.get('/verify-email/:token', authController.verifyEmail);
 
-router.post('updateProfile', (req, res) => {
-    res.send('Update profile route');
-});
+// Profile update route (requires authentication middleware in production)
+router.put('/update-profile', validate,authController.updateProfile);
 
 module.exports = router;

@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
     userInfo: {type: mongoose.Schema.Types.ObjectId, ref: 'Auth', required: true },
-    profilePicture: { type: Blob, default: '' },
     bio: { type: String, default: '' },
     followers: { type: [mongoose.Schema.Types.ObjectId], ref:'User', default: [] },
     following: { type: [mongoose.Schema.Types.ObjectId], ref:'User', default: [] },
