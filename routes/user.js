@@ -1,31 +1,25 @@
 const express = require('express');
 const router = express.Router();
+const validate= require('../middleware/validate');
+const {
+    getuser,
+    userFollowers,
+    userFollowing,
+    updateUser,
+    deleteUser,
+    toggleFollow
+} = require('../controllers/user');
 
-//Get
-router.get("/:id", (req, res) => {
-    res.send(`User profile for ID: ${req.params.id}`);
-});
+router.get('/:id',validate, getuser);
 
-router.get("/find/all" ,( req, res) => {
-    res.send("Get all users");
-});
+router.get('/find/followers/:id',validate, userFollowers);
 
-router.get("/find/:id", (req, res) => {
-    res.send(`Followers of user ID: ${req.params.id}`);
-});
+router.get('/find/following/:id',validate, userFollowing);
 
-//Put
-router.put("/update/:id", (req, res) => {
-    res.send(`Update user profile for ID: ${req.params.id}`);
-});
+router.put('/update',validate, updateUser);
 
-router.post("/toogleConnection", (req, res) => {
-    res.send(`Toggle connection for user ID: ${req}`);
-});
+router.post('/toggleConnection/:username',validate, toggleFollow);
 
-//Delete
-router.delete("/delete/:id", (req, res) => {
-    res.send(`Delete user profile for ID: ${req.params.id}`);
-});
+router.delete('/delete/:id',validate, deleteUser);
 
-module.exports = router; 
+module.exports = router;

@@ -205,7 +205,7 @@ const verifyEmail = async (req, res) => {
 const updateProfile = async (req, res) => {
     const { newEmail, newUsername } = req.body;
 
-    const auth = req.user;
+    const auth = req.auth;
     if (newEmail) {
         auth.email = newEmail;
         auth.emailVerified = false;

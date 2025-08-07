@@ -1,4 +1,5 @@
 const Auth = require("../models/auth");
+const User = require("../models/users");
 const jwt = require("jsonwebtoken");
 
 const verifyToken = async (req, res, next) => {
@@ -11,7 +12,12 @@ const verifyToken = async (req, res, next) => {
         if (err) {
             return res.status(403).json({ status: false, message: 'Invalid token' });
         }
-        const user= await Auth.findById(decoded.id);
+        const auth= await Auth.findById(decoded.id);
+        if (!auth) {
+            return res.status(404).json({ status: false, message: 'User not found' });
+        }
+        req.auth =auth;
+        const user= await User.findOne({ userInfo: auth._id });
         if (!user) {
             return res.status(404).json({ status: false, message: 'User not found' });
         }
